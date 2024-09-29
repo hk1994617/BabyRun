@@ -1,0 +1,2 @@
+Build path: C:/Users/user/Desktop/Новая папка
+Build number: 1

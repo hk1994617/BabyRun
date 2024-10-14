@@ -1,16 +1,14 @@
-using UnityEngine;
 using Dreamteck.Splines;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System.Collections;
+using YG;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
-    // Добавляем AudioSource для музыки
-    public AudioSource audioSource;
 
     public GameObject splineComputer;
     public SplineComputer spline;
@@ -52,6 +50,11 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> dataLevels;
 
+    public GameObject targetObject; // Object to activate only on the first level
+
+    // Массив для хранения материалов скайбоксов
+    public Material[] skyboxMaterials;
+
     private void Awake()
     {
         instance = this;
@@ -63,25 +66,55 @@ public class GameManager : MonoBehaviour
             levelNo = 0;
         }
         totalGemAmount = PlayerPrefs.GetFloat("Total_Gem", 0);
+
+        // Activate object only on the first level
+        if (levelNo == 0)
+        {
+            targetObject.SetActive(true);
+        }
+        else
+        {
+            targetObject.SetActive(false);
+        }
+
+        // Устанавливаем скайбокс в зависимости от номера уровня
+        ChangeSkybox(levelNo);
     }
 
+    // Функция для смены скайбокса
+    void ChangeSkybox(int levelIndex)
+    {
+        // Убедитесь, что индекс не превышает количество материалов скайбоксов
+        if (skyboxMaterials.Length > 0 && levelIndex < skyboxMaterials.Length)
+        {
+            RenderSettings.skybox = skyboxMaterials[levelIndex];
+        }
+    }
+
+    // Start is called before the first frame update
     void Start()
     {
         levelNoDisplay.text = string.Format("Level " + "{0:0}", levelNo + 1);
+
         ObstacleSpawn();
 
-        // Увеличиваем значение денег в стэках, используя модификатор
+        // Setup money stack value through upgrade
         foreach (var stack in GameObject.FindGameObjectsWithTag("Uncollected"))
         {
             stack.GetComponent<MoneyStackValue>().moneyValue += stack.GetComponent<MoneyStackValue>().moneyValue * MenuManager.instance.moneyStackMod;
         }
+
+        YandexGame.FullscreenShow();
     }
 
     private void Update()
     {
         SpeedCalculation();
+
         LetUsStartTheGame();
+
         WinScreenPopup();
+
         LoseCondition();
         LoseScreenPopup();
 
@@ -92,20 +125,23 @@ public class GameManager : MonoBehaviour
 
     void LetUsStartTheGame()
     {
-        if (Input.GetMouseButtonDown(0) && canvas.transform.GetChild(0).gameObject.activeSelf && !EventSystem.current.IsPointerOverGameObject(0))
+        // Mouse and touch input handling
+        if ((Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)) &&
+            canvas.transform.GetChild(0).gameObject.activeSelf &&
+            !EventSystem.current.IsPointerOverGameObject(0))
         {
             Time.timeScale = 1;
             canvas.transform.GetChild(0).gameObject.SetActive(false);
             canvas.transform.GetChild(1).gameObject.SetActive(true);
 
-            // Запуск музыки при начале игры
-            if (!audioSource.isPlaying)
-            {
-                audioSource.Play();
-            }
-
             player.GetComponent<Animator>().SetTrigger("Start");
             player.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+            // Deactivate the object after the first touch or click
+            if (targetObject.activeSelf)
+            {
+                targetObject.SetActive(false);
+            }
         }
     }
 
@@ -153,6 +189,7 @@ public class GameManager : MonoBehaviour
     void ObstacleSpawn()
     {
         Instantiate(dataLevels[levelNo], dataLevels[levelNo].transform.position, dataLevels[levelNo].transform.rotation);
+
         StartCoroutine("DelayCountingStack");
     }
 

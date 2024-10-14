@@ -7,6 +7,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip collisionSound;
     private AudioSource audioSource;
 
+    public string[] targetTags; // Массив тегов, с которыми должно происходить воспроизведение звука
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -14,9 +16,17 @@ public class AudioManager : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collisionSound != null && audioSource != null)
+        // Проверяем, есть ли у объекта, с которым происходит столкновение, подходящий тег
+        foreach (string targetTag in targetTags)
         {
-            audioSource.PlayOneShot(collisionSound);
+            if (collision.gameObject.CompareTag(targetTag))
+            {
+                if (collisionSound != null && audioSource != null)
+                {
+                    audioSource.PlayOneShot(collisionSound);
+                }
+                break; // Выходим из цикла, если нашли подходящий тег
+            }
         }
     }
 }

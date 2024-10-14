@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collisionSound: {fileID: 8300000, guid: edcb542ae34f78d40a6d506ef917aa57, type: 3}
+  targetTags: []
 --- !u!82 &8012202767191671883
 AudioSource:
   m_ObjectHideFlags: 0

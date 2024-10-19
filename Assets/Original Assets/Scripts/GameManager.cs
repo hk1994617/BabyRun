@@ -1,10 +1,9 @@
-using Dreamteck.Splines;
+Ôªøusing Dreamteck.Splines;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using YG;
 
 public class GameManager : MonoBehaviour
 {
@@ -52,8 +51,11 @@ public class GameManager : MonoBehaviour
 
     public GameObject targetObject; // Object to activate only on the first level
 
-    // Ã‡ÒÒË‚ ‰Îˇ ı‡ÌÂÌËˇ Ï‡ÚÂË‡ÎÓ‚ ÒÍ‡È·ÓÍÒÓ‚
+    // –ú–∞—Å—Å–∏–≤ –¥–ª—è —Ö—Ä–∞–Ω–µ–Ω–∏—è –º–∞—Ç–µ—Ä–∏–∞–ª–æ–≤ —Å–∫–∞–π–±–æ–∫—Å–æ–≤
     public Material[] skyboxMaterials;
+
+
+    private bool isPaused = false;
 
     private void Awake()
     {
@@ -77,14 +79,14 @@ public class GameManager : MonoBehaviour
             targetObject.SetActive(false);
         }
 
-        // ”ÒÚ‡Ì‡‚ÎË‚‡ÂÏ ÒÍ‡È·ÓÍÒ ‚ Á‡‚ËÒËÏÓÒÚË ÓÚ ÌÓÏÂ‡ ÛÓ‚Ìˇ
+        // –£—Å—Ç–∞–Ω–∞–≤–ª–∏–≤–∞–µ–º —Å–∫–∞–π–±–æ–∫—Å –≤ –∑–∞–≤–∏—Å–∏–º–æ—Å—Ç–∏ –æ—Ç –Ω–æ–º–µ—Ä–∞ —É—Ä–æ–≤–Ω—è
         ChangeSkybox(levelNo);
     }
 
-    // ‘ÛÌÍˆËˇ ‰Îˇ ÒÏÂÌ˚ ÒÍ‡È·ÓÍÒ‡
+    // –§—É–Ω–∫—Ü–∏—è –¥–ª—è —Å–º–µ–Ω—ã —Å–∫–∞–π–±–æ–∫—Å–∞
     void ChangeSkybox(int levelIndex)
     {
-        // ”·Â‰ËÚÂÒ¸, ˜ÚÓ ËÌ‰ÂÍÒ ÌÂ ÔÂ‚˚¯‡ÂÚ ÍÓÎË˜ÂÒÚ‚Ó Ï‡ÚÂË‡ÎÓ‚ ÒÍ‡È·ÓÍÒÓ‚
+        // –£–±–µ–¥–∏—Ç–µ—Å—å, —á—Ç–æ –∏–Ω–¥–µ–∫—Å –Ω–µ –ø—Ä–µ–≤—ã—à–∞–µ—Ç –∫–æ–ª–∏—á–µ—Å—Ç–≤–æ –º–∞—Ç–µ—Ä–∏–∞–ª–æ–≤ —Å–∫–∞–π–±–æ–∫—Å–æ–≤
         if (skyboxMaterials.Length > 0 && levelIndex < skyboxMaterials.Length)
         {
             RenderSettings.skybox = skyboxMaterials[levelIndex];
@@ -103,8 +105,6 @@ public class GameManager : MonoBehaviour
         {
             stack.GetComponent<MoneyStackValue>().moneyValue += stack.GetComponent<MoneyStackValue>().moneyValue * MenuManager.instance.moneyStackMod;
         }
-
-        YandexGame.FullscreenShow();
     }
 
     private void Update()
@@ -198,4 +198,39 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
         totalNumberOfStack = GameObject.FindGameObjectsWithTag("Uncollected").Length;
     }
+    //void OnApplicationFocus(bool hasFocus)
+    //{
+    //    if (!hasFocus)
+    //    {
+    //        PauseGame();
+    //    }
+    //    else
+    //    {
+    //        ResumeGame();
+    //    }
+        
+    //}
+    //void PauseGame()
+    //{
+    //    // –°—Ç–∞–≤–∏–º –∏–≥—Ä—É –Ω–∞ –ø–∞—É–∑—É
+    //    isPaused = true;
+    //    Time.timeScale = 0f;
+
+    //    // –û—Ç–∫–ª—é—á–∞–µ–º –∑–≤—É–∫
+    //    AudioListener.pause = true;
+
+    //    Debug.Log("Game Paused");
+    //}
+    //void ResumeGame()
+    //{
+    //    // –°–Ω–∏–º–∞–µ–º –∏–≥—Ä—É —Å –ø–∞—É–∑—ã
+    //    isPaused = false;
+    //    Time.timeScale = 1f;
+
+    //    // –í–∫–ª—é—á–∞–µ–º –∑–≤—É–∫
+    //    AudioListener.pause = false;
+
+    //    Debug.Log("Game Resumed");
+    //}
+
 }
